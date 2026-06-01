@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+
+  playlists    Playlist[]
+  favorites    Favorite[]
+  history      ListeningHistory[]
+  chatMessages ChatMessage[]
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  content   String
+  isAdmin   Boolean  @default(false)
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Song {
+  id                     Int     @id @default(autoincrement())
+  title                  String
+  artist                 String
+  duration               String
+  src                    String
+  mood                   String?
+  cloudinaryPublicId     String?
+  cloudinaryResourceType String?
+
+  playlists PlaylistSong[]
+  favorites Favorite[]
+  history   ListeningHistory[]
+}
+
+model Playlist {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  createdAt DateTime @default(now())
+
+  user  User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  songs PlaylistSong[]
+}
+
+model PlaylistSong {
+  playlistId String
+  songId     Int
+  addedAt    DateTime @default(now())
+
+  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  song     Song     @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  @@id([playlistId, songId])
+}
+
+model Favorite {
+  userId    String
+  songId    Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  @@id([userId, songId])
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model MoodImage {
+  id           String   @id
+  data         Bytes?
+  publicId     String?
+  url          String?
+  resourceType String?
+  mimeType     String
+  size         Int?
+  updatedAt    DateTime @updatedAt
+}
+
+model ListeningHistory {
+  id       String   @id @default(cuid())
+  userId   String
+  songId   Int
+  playedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
+}

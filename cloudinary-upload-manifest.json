@@ -1,0 +1,46 @@
+{
+  "static": {
+    "64a26c87-38c0-4e5c-b3c6-0d47b6fb15e6.png": {
+      "publicId": "web-chill/static/64a26c87-38c0-4e5c-b3c6-0d47b6fb15e6",
+      "url": "https://res.cloudinary.com/doax8x0n9/image/upload/v1779587143/web-chill/static/64a26c87-38c0-4e5c-b3c6-0d47b6fb15e6.png",
+      "resourceType": "image",
+      "bytes": 2143166
+    },
+    "8642963.gif": {
+      "publicId": "web-chill/static/8642963",
+      "url": "https://res.cloudinary.com/doax8x0n9/image/upload/v1779587143/web-chill/static/8642963.gif",
+      "resourceType": "image",
+      "bytes": 976341
+    },
+    "moods/chill.jpg": {
+      "publicId": "web-chill/static/moods-chill",
+      "url": "https://res.cloudinary.com/doax8x0n9/image/upload/v1779587145/web-chill/static/moods-chill.jpg",
+      "resourceType": "image",
+      "bytes": 1233506
+    },
+    "moods/f1d1e2507f1b11eaa9dcb3364a58500c.jpg": {
+      "publicId": "web-chill/static/moods-f1d1e2507f1b11eaa9dcb3364a58500c",
+      "url": "https://res.cloudinary.com/doax8x0n9/image/upload/v1779587146/web-chill/static/moods-f1d1e2507f1b11eaa9dcb3364a58500c.jpg",
+      "resourceType": "image",
+      "bytes": 1233506
+    },
+    "moods/icegif-468.gif": {
+      "publicId": "web-chill/static/moods-icegif-468",
+      "url": "https://res.cloudinary.com/doax8x0n9/image/upload/v1779587147/web-chill/static/moods-icegif-468.gif",
+      "resourceType": "image",
+      "bytes": 1471869
+    },
+    "moods/rainy.gif": {
+      "publicId": "web-chill/static/moods-rainy",
+      "url": "https://res.cloudinary.com/doax8x0n9/image/upload/v1779587148/web-chill/static/moods-rainy.gif",
+      "resourceType": "image",
+      "bytes": 598701
+    },
+    "moods/study.gif": {
+      "publicId": "web-chill/static/moods-study",
+      "url": "https://res.cloudinary.com/doax8x0n9/image/upload/v1779587149/web-chill/static/moods-study.gif",
+      "resourceType": "image",
+      "bytes": 1471869
+    }
+  }
+}
