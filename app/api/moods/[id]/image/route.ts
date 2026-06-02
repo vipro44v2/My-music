@@ -52,6 +52,66 @@ export async function POST(
     if (!/^[a-z0-9-]+$/.test(id) || id.length > 30)
       return Response.json({ error: "Invalid mood id" }, { status: 400 });
 
+    if (req.headers.get("content-type")?.includes("application/json")) {
+      const body = await req.json().catch(() => null) as {
+        publicId?: string;
+        url?: string;
+        resourceType?: string;
+        mimeType?: string;
+        size?: number;
+      } | null;
+
+      const publicId = body?.publicId?.trim();
+      const url = body?.url?.trim();
+      const resourceType = body?.resourceType?.trim() || "image";
+      const mimeType = body?.mimeType?.trim() || (resourceType === "video" ? "video/mp4" : "image/jpeg");
+      const size = Number(body?.size ?? 0);
+      const isAllowedMedia = mimeType.startsWith("image/") || mimeType === "video/mp4";
+
+      if (!publicId) return Response.json({ error: "Missing Cloudinary public ID" }, { status: 400 });
+      if (!url) return Response.json({ error: "Missing media URL" }, { status: 400 });
+      if (!isAllowedMedia) return Response.json({ error: "Use JPG, PNG, WebP, GIF, or MP4" }, { status: 400 });
+
+      const now = new Date();
+      const previous = await prisma.moodImage.findUnique({
+        where: { id },
+        select: { publicId: true, resourceType: true },
+      });
+
+      await prisma.moodImage.upsert({
+        where: { id },
+        update: {
+          data: null,
+          publicId,
+          url,
+          resourceType,
+          mimeType,
+          size: Number.isFinite(size) && size > 0 ? size : null,
+          updatedAt: now,
+        },
+        create: {
+          id,
+          data: null,
+          publicId,
+          url,
+          resourceType,
+          mimeType,
+          size: Number.isFinite(size) && size > 0 ? size : null,
+          updatedAt: now,
+        },
+      });
+
+      if (previous?.publicId && previous.publicId !== publicId) {
+        await deleteMoodAsset(previous.publicId, previous.resourceType).catch((err) =>
+          console.warn("[Cloudinary delete old mood image]", err)
+        );
+      }
+
+      emitChange({ type: "moods" });
+      const mediaType = mimeType.startsWith("video/") ? "video" : "image";
+      return Response.json({ src: `/api/moods/${id}/image?v=${now.getTime()}&media=${mediaType}` });
+    }
+
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
     if (!file) return Response.json({ error: "Missing file" }, { status: 400 });

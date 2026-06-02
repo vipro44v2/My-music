@@ -24,6 +24,23 @@ interface MoodState {
   error?: string;
 }
 
+interface MoodUploadSignature {
+  apiKey: string;
+  folder: string;
+  publicId: string;
+  timestamp: string;
+  signature: string;
+  uploadUrl: string;
+}
+
+interface CloudinaryUploadResult {
+  public_id: string;
+  secure_url: string;
+  resource_type: string;
+  bytes?: number;
+  error?: { message?: string };
+}
+
 function MoodCard({
   mood,
   state,
@@ -145,11 +162,44 @@ export default function SettingsPage() {
     const preview = URL.createObjectURL(file);
     setStatus(moodId, { preview, status: "uploading", error: undefined });
 
-    const fd = new FormData();
-    fd.append("file", file);
-
     try {
-      const res = await fetch(`/api/moods/${moodId}/image`, { method: "POST", body: fd });
+      const signRes = await fetch(`/api/moods/${moodId}/image-sign`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileType: file.type,
+          fileSize: file.size,
+        }),
+      });
+      const signed = await signRes.json() as MoodUploadSignature & { error?: string };
+      if (!signRes.ok) throw new Error(signed.error ?? "Upload failed");
+
+      const uploadData = new FormData();
+      uploadData.append("file", file);
+      uploadData.append("api_key", signed.apiKey);
+      uploadData.append("timestamp", signed.timestamp);
+      uploadData.append("folder", signed.folder);
+      uploadData.append("public_id", signed.publicId);
+      uploadData.append("signature", signed.signature);
+
+      const cloudRes = await fetch(signed.uploadUrl, { method: "POST", body: uploadData });
+      const cloud = await cloudRes.json() as CloudinaryUploadResult;
+      if (!cloudRes.ok || !cloud.secure_url || !cloud.public_id) {
+        throw new Error(cloud.error?.message ?? "Cloudinary upload failed");
+      }
+
+      const res = await fetch(`/api/moods/${moodId}/image`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          publicId: cloud.public_id,
+          url: cloud.secure_url,
+          resourceType: cloud.resource_type,
+          mimeType: file.type || (cloud.resource_type === "video" ? "video/mp4" : "image/jpeg"),
+          size: cloud.bytes || file.size,
+        }),
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Upload failed");
 
