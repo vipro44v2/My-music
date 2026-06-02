@@ -47,6 +47,25 @@ function sign(params: Record<string, string>, apiSecret: string) {
   return createHash("sha1").update(`${payload}${apiSecret}`).digest("hex");
 }
 
+export function createCloudinaryUploadSignature(folder: string, publicId: string) {
+  const config = getCloudinaryConfig();
+  const timestamp = Math.floor(Date.now() / 1000).toString();
+  const params = {
+    folder,
+    public_id: publicId,
+    timestamp,
+  };
+
+  return {
+    cloudName: config.cloudName,
+    apiKey: config.apiKey,
+    folder,
+    publicId,
+    timestamp,
+    signature: sign(params, config.apiSecret),
+  };
+}
+
 function resourceTypeForMime(mimeType: string): CloudinaryResourceType {
   return mimeType.startsWith("video/") ? "video" : "image";
 }

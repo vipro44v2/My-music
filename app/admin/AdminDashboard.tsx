@@ -40,6 +40,22 @@ interface UploadItem {
   error?: string;
 }
 
+interface SongUploadSignature {
+  apiKey: string;
+  folder: string;
+  publicId: string;
+  timestamp: string;
+  signature: string;
+  uploadUrl: string;
+}
+
+interface CloudinaryUploadResult {
+  public_id: string;
+  secure_url: string;
+  resource_type: string;
+  error?: { message?: string };
+}
+
 type MoodStatus = "idle" | "uploading" | "done" | "error";
 
 interface MoodState {
@@ -148,16 +164,49 @@ function SongsTab() {
 
   const uploadItem = async (item: UploadItem) => {
     updateItem(item.uid, { status: "uploading" });
-    const fd = new FormData();
-    fd.append("file", item.file);
-    fd.append("title", item.title);
-    fd.append("artist", item.artist);
-    fd.append("duration", item.duration);
-    if (item.mood) fd.append("mood", item.mood);
     try {
-      const res = await fetch("/api/songs/upload", { method: "POST", body: fd });
+      const signRes = await fetch("/api/songs/upload-sign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fileName: item.file.name,
+          fileType: item.file.type,
+          fileSize: item.file.size,
+        }),
+      });
+      const signed = await signRes.json() as SongUploadSignature & { error?: string };
+      if (!signRes.ok) throw new Error(signed.error ?? "Upload failed");
+
+      const uploadData = new FormData();
+      uploadData.append("file", item.file);
+      uploadData.append("api_key", signed.apiKey);
+      uploadData.append("timestamp", signed.timestamp);
+      uploadData.append("folder", signed.folder);
+      uploadData.append("public_id", signed.publicId);
+      uploadData.append("signature", signed.signature);
+
+      const cloudRes = await fetch(signed.uploadUrl, { method: "POST", body: uploadData });
+      const cloud = await cloudRes.json() as CloudinaryUploadResult;
+      if (!cloudRes.ok || !cloud.secure_url || !cloud.public_id) {
+        throw new Error(cloud.error?.message ?? "Cloudinary upload failed");
+      }
+
+      const res = await fetch("/api/songs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: item.title,
+          artist: item.artist,
+          duration: item.duration,
+          mood: item.mood || null,
+          src: cloud.secure_url,
+          cloudinaryPublicId: cloud.public_id,
+          cloudinaryResourceType: cloud.resource_type || "video",
+        }),
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Upload failed");
+
       updateItem(item.uid, { status: "done" });
       setSongs((prev) => [...prev, data]);
       setTimeout(() => removeItem(item.uid), 1500);
