@@ -13,7 +13,7 @@ export default function HeroSection() {
         <p className="text-white/65 text-[13px] lg:text-[14px] leading-relaxed mb-5 lg:mb-7 drop-shadow">
           Relax, study, or drift into sleep
           <br className="hidden sm:block" />
-          {" "}with music and the world of Gibli.
+          {" "}with music and calming moods.
         </p>
         <button className="flex items-center gap-2.5 glass-input border border-white/25 text-white px-6 lg:px-7 py-2.5 lg:py-3 rounded-full text-sm font-semibold hover:bg-white/18 hover:border-white/40 transition-all duration-200 shadow-lg">
           <Play size={14} fill="white" />

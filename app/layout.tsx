@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gibli Chill",
-  description: "Chill with Ghibli melodies",
+  title: "My Chilling",
+  description: "Relax with music and calming moods",
 };
 
 export default function RootLayout({

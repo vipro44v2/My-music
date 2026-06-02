@@ -89,7 +89,7 @@ export default function AuthForm({ embedded = false, initialMode, onCancel, onSu
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-600 flex items-center justify-center shadow-lg shadow-teal-500/30 mb-4">
             <Music2 size={24} className="text-white" strokeWidth={2} />
           </div>
-          <h1 className="text-white text-xl font-bold tracking-tight">Gibli Chill</h1>
+          <h1 className="text-white text-xl font-bold tracking-tight">My Chilling</h1>
           <p className="text-white/40 text-sm mt-1">
             {mode === "login" ? "Welcome back" : "Create a new account"}
           </p>

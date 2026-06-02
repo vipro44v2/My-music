@@ -198,7 +198,7 @@ function HomeStage({
         <div className="max-w-xl">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/12 bg-black/28 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-emerald-100/75 shadow-2xl shadow-black/25 backdrop-blur-2xl">
             <Sparkles size={13} className="text-emerald-300" />
-            Gibli Chill
+            My Chilling
           </div>
           <h1 className="max-w-[11ch] text-[clamp(2.55rem,7vw,5.75rem)] font-black leading-[0.9] tracking-normal text-white drop-shadow-[0_18px_60px_rgba(0,0,0,0.55)]">
             Quiet music for slow hours

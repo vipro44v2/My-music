@@ -233,7 +233,7 @@ export default function MusicPlayer({
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-500 to-teal-600 flex-shrink-0 shadow-lg shadow-teal-900/50" />
           <div className="min-w-0">
             <p className="text-white text-[13px] font-semibold truncate">{song.title}</p>
-            <p className="text-white/40 text-[11px] truncate">{song.artist} / Gibli Vibes</p>
+            <p className="text-white/40 text-[11px] truncate">{song.artist} / My Chilling</p>
           </div>
         </div>
 

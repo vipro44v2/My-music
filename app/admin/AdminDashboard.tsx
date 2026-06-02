@@ -1125,7 +1125,7 @@ export default function AdminDashboard() {
             </div>
             <div>
               <h1 className="text-lg font-bold">Admin</h1>
-              <p className="text-white/35 text-xs">Gibli Chill</p>
+              <p className="text-white/35 text-xs">My Chilling</p>
             </div>
           </div>
           <button
